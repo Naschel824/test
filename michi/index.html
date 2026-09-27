@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f7f3" />
+    <title>keizoku — the 習慣トラッカー</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="keizoku ホーム"><span class="brand-mark">m</span><span>keizoku</span></a>
+        <div class="topbar-note"><span class="live-dot"></span>今日も、少しずつ。</div>
+      </header>
+
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow" id="today-label">YOUR DAILY RHYTHM</p>
+        <h1 id="page-title">おかえりなさい<span class="wave">☀</span></h1>
+        <p class="date-line" id="date-line"></p>
+      </section>
+
+      <section class="summary" aria-label="今日の進捗">
+        <div class="summary-copy">
+          <p class="summary-label">TODAY'S PROGRESS</p>
+          <p class="summary-count"><strong id="done-count">0</strong><span> / <span id="total-count">0</span> 完了</span></p>
+          <p class="summary-message" id="summary-message">小さな一歩から始めましょう。</p>
+        </div>
+        <div class="progress-ring" id="progress-ring" role="img" aria-label="今日の達成率 0%">
+          <div class="ring-center"><strong id="progress-percent">0%</strong><span>達成</span></div>
+        </div>
+        <span class="summary-sparkle sparkle-one">✳</span><span class="summary-sparkle sparkle-two">✦</span>
+      </section>
+
+      <section class="habits-section" aria-labelledby="habits-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">YOUR ROUTINE</p><h2 id="habits-title">今日の習慣</h2></div>
+          <button class="add-button" id="open-form" type="button"><span>＋</span> 習慣を追加</button>
+        </div>
+        <form class="add-form" id="habit-form" hidden>
+          <label for="habit-name">新しい習慣</label>
+          <div class="form-row"><input id="habit-name" name="habit" maxlength="28" placeholder="例：寝る前にストレッチ" required /><button type="submit">追加する</button><button class="cancel-button" id="cancel-form" type="button" aria-label="閉じる">×</button></div>
+        </form>
+        <div class="habit-list" id="habit-list"></div>
+        <div class="empty-state" id="empty-state" hidden>
+          <div class="empty-icon">✿</div><h3>習慣をひとつ、始めてみませんか？</h3><p>小さな習慣を登録して、今日の一歩を記録しましょう。</p>
+          <button class="add-button" id="empty-add" type="button"><span>＋</span> 最初の習慣を追加</button>
+        </div>
+      </section>
+
+      <footer><span class="footer-leaf">✳</span> 続けることより、また始めること。 <span class="footer-brand">keizoku</span></footer>
+    </main>
+    <template id="habit-template">
+      <article class="habit-card">
+        <button class="check-button" type="button" aria-label="習慣を完了にする"><span>✓</span></button>
+        <div class="habit-icon" aria-hidden="true"></div>
+        <div class="habit-info"><h3></h3><p><span class="flame">↗</span> <span class="streak-value"></span></p></div>
+        <span class="completed-label">できた！</span>
+        <button class="delete-button" type="button" aria-label="この習慣を削除" title="削除">···</button>
+      </article>
+    </template>
+  </body>
+</html>
+
