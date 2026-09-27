@@ -35,10 +35,14 @@ function countriesFrom(value) {
 
 function paintStars() {
   const rating = Number(form.querySelector('input[name="rating"]:checked')?.value ?? 5);
+  setStars(rating);
+  form.querySelector(".rating-hint").textContent = `${rating} / 5`;
+}
+
+function setStars(rating) {
   form.querySelectorAll(".stars label").forEach((label, index) => {
     label.classList.toggle("is-selected", index < rating);
   });
-  form.querySelector(".rating-hint").textContent = `${rating} / 5`;
 }
 
 function render() {
@@ -118,6 +122,8 @@ sortSelect.addEventListener("change", render);
 gramsInput.addEventListener("input", updateCostPreview);
 priceInput.addEventListener("input", updateCostPreview);
 form.querySelectorAll('input[name="rating"]').forEach((input) => input.addEventListener("change", paintStars));
+form.querySelectorAll(".stars label").forEach((label, index) => label.addEventListener("mouseenter", () => setStars(index + 1)));
+form.querySelector(".stars").addEventListener("mouseleave", paintStars);
 form.elements.countries.addEventListener("input", () => form.elements.countries.setCustomValidity(""));
 
 form.addEventListener("submit", (event) => {
