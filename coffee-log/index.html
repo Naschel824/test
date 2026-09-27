@@ -54,7 +54,8 @@
             <label class="field">内容量 <span class="field-unit">g</span><input name="grams" type="number" min="1" max="99999" step="1" placeholder="200" required /></label>
             <label class="field">値段 <span class="field-unit">円</span><input name="price" type="number" min="1" max="9999999" step="1" placeholder="1800" required /></label>
             <label class="field field-wide">生産国 <span class="field-hint">最大3つ・複数の場合はカンマ区切り</span><input name="countries" maxlength="100" placeholder="例：エチオピア、ケニア" /></label>
-            <fieldset class="field field-wide rating-field"><legend>味の評価</legend><div class="stars" role="radiogroup" aria-label="味の評価 1から5"><label><input type="radio" name="rating" value="1" /><span>★</span></label><label><input type="radio" name="rating" value="2" /><span>★</span></label><label><input type="radio" name="rating" value="3" /><span>★</span></label><label><input type="radio" name="rating" value="4" /><span>★</span></label><label><input type="radio" name="rating" value="5" checked /><span>★</span></label><span class="rating-hint">星を選んでください</span></div></fieldset>
+            <fieldset class="field field-wide rating-field"><legend>味の評価</legend>
+              <div class="rating-input"><input name="rating" type="number" min="0.5" max="5" step="0.5" value="5" required /><span class="rating-hint">0.5刻みで選べます</span></div>
             <label class="field field-wide">味のメモ<textarea name="note" rows="3" maxlength="500" placeholder="香りや酸味、甘みなど。自由にメモできます。"></textarea></label>
           </div>
           <p class="cost-preview" id="cost-preview">コスパ <strong>—</strong> <span>円 / g</span></p>
