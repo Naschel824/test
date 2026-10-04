@@ -43,7 +43,14 @@
         <div class="toolbar">
           <label class="search-box"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="豆・お店・生産国で検索" aria-label="記録を検索" /></label>
           <label class="sort-control"><span>並び替え</span><select id="sort-select" aria-label="記録の並び替え"><option value="newest">新しく記録した順</option><option value="rating">評価が高い順</option><option value="cost">コスパが良い順</option></select></label>
+          <div class="data-actions" aria-label="記録データのバックアップ">
+            <button class="utility-button" id="download-data" type="button">JSONをダウンロード</button>
+            <button class="utility-button" id="upload-data" type="button">JSONを読み込む</button>
+            <input id="upload-file" type="file" accept=".json,application/json" hidden />
+          </div>
         </div>
+
+        <p class="data-help" id="data-status" role="status" aria-live="polite">読み込み時は、現在の記録を置き換えます。</p>
 
         <form class="entry-form" id="bean-form" hidden>
           <div class="form-heading"><div><p class="eyebrow">NEW TASTING NOTE</p><h3>新しい豆を記録</h3></div><button class="close-button" id="close-form" type="button" aria-label="フォームを閉じる">×</button></div>
