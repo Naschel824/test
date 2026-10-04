@@ -34,15 +34,15 @@ function countriesFrom(value) {
 }
 
 function paintStars() {
-  const rating = Number(form.querySelector('input[name="rating"]:checked')?.value ?? 5);
-  setStars(rating);
+  const rating = Number(form.elements.rating.value || 5);
   form.querySelector(".rating-hint").textContent = `${rating} / 5`;
 }
 
-function setStars(rating) {
-  form.querySelectorAll(".stars label").forEach((label, index) => {
-    label.classList.toggle("is-selected", index < rating);
-  });
+function formatStars(rating) {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  const empty = 5 - Math.ceil(rating);
+  return `${"★".repeat(full)}${half ? "½" : ""}${"☆".repeat(empty)}`;
 }
 
 function render() {
@@ -63,7 +63,7 @@ function render() {
     const card = template.content.firstElementChild.cloneNode(true);
     card.querySelector(".bean-name").textContent = bean.name;
     card.querySelector(".roast-pill").textContent = bean.roast || "焙煎度未設定";
-    card.querySelector(".card-stars").textContent = `${"★".repeat(bean.rating)}${"☆".repeat(5 - bean.rating)}`;
+    card.querySelector(".card-stars").textContent = formatStars(bean.rating);
     card.querySelector(".card-stars").setAttribute("aria-label", `評価 ${bean.rating} / 5`);
     card.querySelector(".bean-store").textContent = bean.store || "購入店舗未設定";
     card.querySelector(".meta-separator").hidden = !(bean.countries?.length);
@@ -93,6 +93,7 @@ function showForm() {
 
 function closeForm() {
   form.reset();
+  paintStars();
   form.hidden = true;
   updateCostPreview();
   render();
@@ -121,9 +122,7 @@ searchInput.addEventListener("input", render);
 sortSelect.addEventListener("change", render);
 gramsInput.addEventListener("input", updateCostPreview);
 priceInput.addEventListener("input", updateCostPreview);
-form.querySelectorAll('input[name="rating"]').forEach((input) => input.addEventListener("change", paintStars));
-form.querySelectorAll(".stars label").forEach((label, index) => label.addEventListener("mouseenter", () => setStars(index + 1)));
-form.querySelector(".stars").addEventListener("mouseleave", paintStars);
+form.elements.rating.addEventListener("input", paintStars);
 form.elements.countries.addEventListener("input", () => form.elements.countries.setCustomValidity(""));
 
 form.addEventListener("submit", (event) => {
