@@ -21,6 +21,75 @@ function saveBeans() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(beans));
 }
 
+function setDataStatus(message) {
+  document.querySelector("#data-status").textContent = message;
+}
+
+function downloadBeans() {
+  const backup = {
+    format: "mame-coffee-log",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    beans,
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `mame-coffee-log-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setDataStatus(`記録 ${beans.length} 件をJSONでダウンロードしました。`);
+}
+
+function validBackupBean(bean) {
+  return bean && typeof bean === "object" && !Array.isArray(bean)
+    && typeof bean.id === "string"
+    && typeof bean.name === "string" && bean.name.trim().length > 0
+    && typeof bean.grams === "number" && Number.isFinite(bean.grams) && bean.grams > 0
+    && typeof bean.price === "number" && Number.isFinite(bean.price) && bean.price > 0
+    && Array.isArray(bean.countries) && bean.countries.length <= 3
+    && bean.countries.every((country) => typeof country === "string")
+    && typeof bean.rating === "number" && Number.isFinite(bean.rating) && bean.rating >= 0.5 && bean.rating <= 5
+    && typeof bean.createdAt === "number" && Number.isFinite(bean.createdAt)
+    && ["store", "roast", "note"].every((key) => bean[key] === undefined || typeof bean[key] === "string");
+}
+
+async function uploadBeans(file) {
+  const backup = JSON.parse(await file.text());
+  if (!backup || backup.format !== "mame-coffee-log" || backup.version !== 1
+      || !Array.isArray(backup.beans) || !backup.beans.every(validBackupBean)) {
+    throw new Error("このアプリのバックアップJSONではないか、データ形式が正しくありません。");
+  }
+
+  const imported = backup.beans.map((bean) => ({
+    ...bean,
+    store: bean.store ?? "",
+    roast: bean.roast ?? "",
+    note: bean.note ?? "",
+  }));
+  const message = `現在の記録 ${beans.length} 件を、ファイル内の ${imported.length} 件で置き換えます。続けますか？`;
+  if (!window.confirm(message)) {
+    setDataStatus("JSONの読み込みをキャンセルしました。");
+    return;
+  }
+
+  const previousBeans = beans;
+  beans = imported;
+  try {
+    saveBeans();
+  } catch {
+    beans = previousBeans;
+    throw new Error("ブラウザに保存できませんでした。空き容量を確認してください。");
+  }
+  searchInput.value = "";
+  sortSelect.value = "newest";
+  render();
+  setDataStatus(`記録 ${beans.length} 件を読み込みました。`);
+}
+
 function costPerGram(bean) {
   return Number(bean.price) / Number(bean.grams);
 }
@@ -113,6 +182,21 @@ function deleteBean(id) {
   saveBeans();
   render();
 }
+
+document.querySelector("#download-data").addEventListener("click", downloadBeans);
+const uploadFile = document.querySelector("#upload-file");
+document.querySelector("#upload-data").addEventListener("click", () => uploadFile.click());
+uploadFile.addEventListener("change", async () => {
+  const file = uploadFile.files?.[0];
+  if (!file) return;
+  try {
+    await uploadBeans(file);
+  } catch (error) {
+    setDataStatus(error instanceof Error ? error.message : "JSONを読み込めませんでした。");
+  } finally {
+    uploadFile.value = "";
+  }
+});
 
 document.querySelector("#open-form").addEventListener("click", showForm);
 document.querySelector("#empty-add").addEventListener("click", showForm);
